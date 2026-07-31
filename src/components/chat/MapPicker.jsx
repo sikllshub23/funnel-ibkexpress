@@ -44,8 +44,8 @@ function ManualAddressPicker({ instruction, onChange, degraded }) {
     <div className="space-y-3 rounded-ticket border border-dashed border-line bg-surface p-4">
       <p className="text-xs text-ink-soft">
         {degraded
-          ? 'Carte indisponible pour le moment. Renseignez l’adresse manuellement.'
-          : 'Mode manuel (aucune clé Google Maps configurée). Renseignez l’adresse manuellement.'}
+          ? 'Carte Google Maps bientôt disponible. Renseignez l’adresse manuellement pour le moment.'
+          : 'Mode manuel (Intégration Google Maps, Bientôt disponible). Renseignez l’adresse manuellement.'}
       </p>
       <label className="block">
         <span className="mb-1 block text-sm font-medium text-ink">{instruction}</span>
