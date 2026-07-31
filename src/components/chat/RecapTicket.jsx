@@ -23,7 +23,6 @@ export default function RecapTicket({ data, onEditStep }) {
       <div className="rounded-ticket border border-ink bg-paper p-5">
         <RecapBlock label="Récupération" onEdit={() => onEditStep(1)}>
           <p className="text-ink">{data.pickup.point.address}</p>
-          <RecapLinks mapsLink={data.pickup.point.mapsLink} cityKey={data.pickup.point.cityKey} />
           <p className="mt-1 font-mono text-sm text-ink-soft">{data.pickup.phone}</p>
         </RecapBlock>
 
@@ -31,7 +30,6 @@ export default function RecapTicket({ data, onEditStep }) {
 
         <RecapBlock label="Livraison" onEdit={() => onEditStep(2)}>
           <p className="text-ink">{data.delivery.point.address}</p>
-          <RecapLinks mapsLink={data.delivery.point.mapsLink} cityKey={data.delivery.point.cityKey} />
           <p className="mt-1 font-mono text-sm text-ink-soft">{data.delivery.phone}</p>
         </RecapBlock>
 
