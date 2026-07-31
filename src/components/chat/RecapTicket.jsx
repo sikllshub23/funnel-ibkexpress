@@ -6,8 +6,8 @@ import { cityLabel } from '../../utils/city.js'
 export default function RecapTicket({ data, onEditStep }) {
   const estimate = computeEstimate(data.pickup.point.cityKey, data.delivery.point.cityKey)
   const message = buildOrderMessage({
-    pickup: { address: data.pickup.point.address, mapsLink: data.pickup.point.mapsLink, phone: data.pickup.phone },
-    delivery: { address: data.delivery.point.address, mapsLink: data.delivery.point.mapsLink, phone: data.delivery.phone },
+    pickup: { address: data.pickup.point.address, phone: data.pickup.phone },
+    delivery: { address: data.delivery.point.address, phone: data.delivery.phone },
     details: data.details,
     estimate
   })
