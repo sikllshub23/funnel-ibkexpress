@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useGoogleMapsScript } from '../../hooks/useGoogleMapsScript.js'
-import { cityFromAddressComponents, normalizeCity, cityLabel } from '../../utils/city.js'
+import { cityFromAddressComponents, normalizeCity } from '../../utils/city.js'
 
 const COTONOU_CENTER = { lat: 6.3703, lng: 2.3912 }
 
@@ -12,63 +12,66 @@ function buildSearchMapsLink(address) {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
 }
 
+// Adresse au clavier et/ou repère sur la carte : les deux méthodes alimentent
+// le même champ, la carte ne fait que pré-remplir ce que l'utilisateur peut ajuster.
 export default function MapPicker({ instruction, onChange }) {
   const status = useGoogleMapsScript()
-
-  if (status === 'ready') {
-    return <LiveMapPicker instruction={instruction} onChange={onChange} />
-  }
-
-  return <ManualAddressPicker instruction={instruction} onChange={onChange} degraded={status === 'error'} />
-}
-
-function ManualAddressPicker({ instruction, onChange, degraded }) {
   const [address, setAddress] = useState('')
   const [cityKey, setCityKey] = useState('')
+  const [pin, setPin] = useState(null)
 
-  function emit(nextAddress, nextCityKey) {
+  function emit(nextAddress, nextCityKey, nextPin) {
     if (!nextAddress) {
       onChange(null)
       return
     }
     onChange({
       address: nextAddress,
-      lat: null,
-      lng: null,
-      mapsLink: buildSearchMapsLink(nextAddress),
+      lat: nextPin?.lat ?? null,
+      lng: nextPin?.lng ?? null,
+      mapsLink: nextPin ? buildMapsLink(nextPin.lat, nextPin.lng) : buildSearchMapsLink(nextAddress),
       cityKey: nextCityKey || null
     })
   }
 
+  function handleAddressChange(value) {
+    setAddress(value)
+    emit(value, cityKey, pin)
+  }
+
+  function handleCityChange(value) {
+    setCityKey(value)
+    emit(address, value, pin)
+  }
+
+  function handlePinResolved(nextPin, geocoded) {
+    const nextAddress = geocoded?.address ?? address
+    const nextCityKey = geocoded?.cityKey ?? cityKey
+    setPin(nextPin)
+    setAddress(nextAddress)
+    if (geocoded?.cityKey) setCityKey(geocoded.cityKey)
+    emit(nextAddress, nextCityKey, nextPin)
+  }
+
   return (
-    <div className="space-y-3 rounded-ticket border border-dashed border-line bg-surface p-4">
-      <p className="text-xs text-ink-soft">
-        {degraded
-          ? 'Carte indisponible pour le moment. Renseignez l’adresse manuellement.'
-          : 'Mode manuel (aucune clé Google Maps configurée). Renseignez l’adresse manuellement.'}
-      </p>
+    <div className="space-y-3">
       <label className="block">
         <span className="mb-1 block text-sm font-medium text-ink">{instruction}</span>
         <input
           type="text"
           required
           value={address}
-          onChange={(event) => {
-            setAddress(event.target.value)
-            emit(event.target.value, cityKey)
-          }}
+          onChange={(event) => handleAddressChange(event.target.value)}
           placeholder="Ex. Carrefour, quartier, point de repère…"
           className="min-h-[44px] w-full rounded-lg border border-line bg-paper px-3 text-[15px] text-ink placeholder:text-ink-soft/70"
         />
       </label>
+
       <label className="block">
         <span className="mb-1 block text-sm font-medium text-ink">Ville</span>
         <select
           value={cityKey}
-          onChange={(event) => {
-            setCityKey(event.target.value)
-            emit(address, event.target.value)
-          }}
+          onChange={(event) => handleCityChange(event.target.value)}
           className="min-h-[44px] w-full rounded-lg border border-line bg-paper px-3 text-[15px] text-ink"
         >
           <option value="">Sélectionner…</option>
@@ -77,17 +80,23 @@ function ManualAddressPicker({ instruction, onChange, degraded }) {
           <option value="autre">Autre zone</option>
         </select>
       </label>
+
+      {status === 'ready' && <MapPinPicker pin={pin} onResolved={handlePinResolved} />}
+
+      {status === 'error' && (
+        <p className="text-xs text-danger">
+          Carte indisponible pour le moment. Utilisez l'adresse et la ville ci-dessus.
+        </p>
+      )}
     </div>
   )
 }
 
-function LiveMapPicker({ instruction, onChange }) {
+function MapPinPicker({ pin, onResolved }) {
   const mapNodeRef = useRef(null)
-  const inputRef = useRef(null)
   const mapRef = useRef(null)
   const markerRef = useRef(null)
   const geocoderRef = useRef(null)
-  const [result, setResult] = useState(null)
   const [locating, setLocating] = useState(false)
 
   useEffect(() => {
@@ -95,8 +104,8 @@ function LiveMapPicker({ instruction, onChange }) {
     geocoderRef.current = new google.maps.Geocoder()
 
     const map = new google.maps.Map(mapNodeRef.current, {
-      center: COTONOU_CENTER,
-      zoom: 13,
+      center: pin ?? COTONOU_CENTER,
+      zoom: pin ? 15 : 13,
       disableDefaultUI: true,
       zoomControl: true,
       clickableIcons: false
@@ -105,50 +114,28 @@ function LiveMapPicker({ instruction, onChange }) {
 
     const marker = new google.maps.Marker({
       map,
-      position: COTONOU_CENTER,
+      position: pin ?? COTONOU_CENTER,
       draggable: true
     })
     markerRef.current = marker
 
     function settleAt(latLng) {
+      const lat = latLng.lat()
+      const lng = latLng.lng()
       map.panTo(latLng)
       marker.setPosition(latLng)
       geocoderRef.current.geocode({ location: latLng }, (results, geoStatus) => {
-        const lat = latLng.lat()
-        const lng = latLng.lng()
         if (geoStatus === 'OK' && results?.[0]) {
           const cityName = cityFromAddressComponents(results[0].address_components)
-          const cityKey = normalizeCity(cityName)
-          const payload = {
-            address: results[0].formatted_address,
-            lat,
-            lng,
-            mapsLink: buildMapsLink(lat, lng),
-            cityKey
-          }
-          setResult(payload)
-          onChange(payload)
+          onResolved({ lat, lng }, { address: results[0].formatted_address, cityKey: normalizeCity(cityName) })
         } else {
-          const payload = { address: `${lat.toFixed(5)}, ${lng.toFixed(5)}`, lat, lng, mapsLink: buildMapsLink(lat, lng), cityKey: null }
-          setResult(payload)
-          onChange(payload)
+          onResolved({ lat, lng }, null)
         }
       })
     }
 
     marker.addListener('dragend', () => settleAt(marker.getPosition()))
     map.addListener('click', (event) => settleAt(event.latLng))
-
-    const autocomplete = new google.maps.places.Autocomplete(inputRef.current, {
-      componentRestrictions: { country: 'bj' },
-      fields: ['geometry', 'formatted_address']
-    })
-    autocomplete.addListener('place_changed', () => {
-      const place = autocomplete.getPlace()
-      if (place.geometry?.location) {
-        settleAt(place.geometry.location)
-      }
-    })
 
     return () => {
       marker.setMap(null)
@@ -162,23 +149,18 @@ function LiveMapPicker({ instruction, onChange }) {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const latLng = new window.google.maps.LatLng(position.coords.latitude, position.coords.longitude)
+        const lat = latLng.lat()
+        const lng = latLng.lng()
         mapRef.current.panTo(latLng)
-        markerRef.current.setPosition(latLng)
         mapRef.current.setZoom(15)
+        markerRef.current.setPosition(latLng)
         geocoderRef.current.geocode({ location: latLng }, (results, geoStatus) => {
-          const lat = latLng.lat()
-          const lng = latLng.lng()
-          const cityName = geoStatus === 'OK' ? cityFromAddressComponents(results[0]?.address_components) : null
-          const cityKey = normalizeCity(cityName)
-          const payload = {
-            address: geoStatus === 'OK' ? results[0].formatted_address : `${lat.toFixed(5)}, ${lng.toFixed(5)}`,
-            lat,
-            lng,
-            mapsLink: buildMapsLink(lat, lng),
-            cityKey
+          if (geoStatus === 'OK' && results?.[0]) {
+            const cityName = cityFromAddressComponents(results[0].address_components)
+            onResolved({ lat, lng }, { address: results[0].formatted_address, cityKey: normalizeCity(cityName) })
+          } else {
+            onResolved({ lat, lng }, null)
           }
-          setResult(payload)
-          onChange(payload)
           setLocating(false)
         })
       },
@@ -188,17 +170,7 @@ function LiveMapPicker({ instruction, onChange }) {
   }
 
   return (
-    <div className="space-y-3">
-      <label className="block">
-        <span className="mb-1 block text-sm font-medium text-ink">{instruction}</span>
-        <input
-          ref={inputRef}
-          type="text"
-          placeholder="Rechercher une adresse…"
-          className="min-h-[44px] w-full rounded-lg border border-line bg-paper px-3 text-[15px] text-ink placeholder:text-ink-soft/70"
-        />
-      </label>
-
+    <div className="space-y-2">
       <button
         type="button"
         onClick={useMyLocation}
@@ -210,23 +182,9 @@ function LiveMapPicker({ instruction, onChange }) {
 
       <div ref={mapNodeRef} className="h-56 w-full rounded-ticket border border-line" />
 
-      <p className="text-xs text-ink-soft">Déplacez le repère si l'adresse trouvée n'est pas exacte.</p>
-
-      {result && (
-        <div className="rounded-lg bg-surface p-3 text-sm">
-          <p className="text-ink">{result.address}</p>
-          <div className="mt-1 flex flex-wrap items-center gap-2">
-            <a href={result.mapsLink} target="_blank" rel="noreferrer" className="font-medium text-ink underline underline-offset-2">
-              Voir sur Google Maps
-            </a>
-            {result.cityKey ? (
-              <span className="font-mono text-xs uppercase text-ink-soft">{cityLabel(result.cityKey)}</span>
-            ) : (
-              <span className="font-mono text-xs uppercase text-danger">Zone non reconnue</span>
-            )}
-          </div>
-        </div>
-      )}
+      <p className="text-xs text-ink-soft">
+        Ou déplacez le repère sur la carte : l'adresse ci-dessus se met à jour automatiquement.
+      </p>
     </div>
   )
 }

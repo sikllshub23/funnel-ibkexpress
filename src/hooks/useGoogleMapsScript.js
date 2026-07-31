@@ -14,7 +14,7 @@ function loadScript(apiKey) {
 
     const script = document.createElement('script')
     script.id = SCRIPT_ID
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&language=fr&region=BJ`
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&language=fr&region=BJ`
     script.async = true
     script.onload = () => resolve()
     script.onerror = () => reject(new Error('Impossible de charger Google Maps.'))
