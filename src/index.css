@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-line;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-paper text-ink;
+  }
+
+  :focus-visible {
+    outline: 3px solid theme('colors.signal');
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Tampon incliné jaune "signal", utilisé pour le prix estimé sur le bon de course. */
+  .price-stamp {
+    @apply inline-flex items-baseline gap-1 rounded-sm bg-signal px-3 py-1 font-display text-2xl font-bold text-ink;
+    transform: rotate(-3deg);
+  }
+
+  /* Ligne de déchirure façon billet/bon de course, avec encoches aux extrémités. */
+  .tear-line {
+    @apply relative border-t-2 border-dashed border-line;
+  }
+
+  .tear-line::before,
+  .tear-line::after {
+    content: '';
+    @apply absolute -top-[9px] h-[18px] w-[18px] rounded-full bg-surface;
+  }
+
+  .tear-line::before {
+    left: -9px;
+  }
+
+  .tear-line::after {
+    right: -9px;
+  }
+
+  /* Bande de progression perforée du chat (3 segments, façon souche de ticket). */
+  .ticket-progress-segment {
+    @apply h-1.5 flex-1 rounded-full bg-line transition-colors duration-300;
+  }
+
+  .ticket-progress-segment[data-filled='true'] {
+    @apply bg-signal;
+  }
+}
