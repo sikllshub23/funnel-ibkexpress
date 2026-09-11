@@ -44,7 +44,8 @@ export const ibkExpress = {
       id: 'partenaire-1',
       nom: 'Diana Shop',
       categorie: 'Vêtements hommes et femmes · Paires · Skincare ',
-      description: 'Plats du jour et grillades, livrés chauds sur Cotonou.',
+      description: 'Découvrez la beauté au pluriel chez Diana
+Shop, où chaque style raconte une histoire unique et où chaque soin révèle votre éclat naturel',
       image: '/bons-plans/partenaire-1.svg',
       whatsapp: '22953011595'
     },
