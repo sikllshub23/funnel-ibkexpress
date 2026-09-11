@@ -51,9 +51,9 @@ Shop, où chaque style raconte une histoire unique et où chaque soin révèle v
     },
     {
       id: 'partenaire-2',
-      nom: 'Konnü-vivi',
-      categorie: 'Fast food',
-      description: 'Tissus et prêt-à-porter, commande directe sur WhatsApp.',
+      nom: 'Konnü',
+      categorie: 'Fast food · Yaourts',
+      description: 'Savourez un yaourt nature ou aux fruits accompagné d’un bon sandwich jambon-fromage, au poulet, a la viande hachée ou au poisson. Votre formule gourmande à partir de 2.000 FCFA.',
       image: '/bons-plans/partenaire-2.svg',
       whatsapp: '22991208755'
     },
@@ -61,7 +61,7 @@ Shop, où chaque style raconte une histoire unique et où chaque soin révèle v
       id: 'partenaire-3',
       nom: 'Casamisu',
       categorie: 'Fast Food',
-      description: 'Cakes, livraison prioritaire.',
+      description: 'Découvrez les tiramisus et cheesecakes de Casa Misu, disponibles en plusieurs saveurs gourmandes : Classique, Oreo, Lotus et Kinder. À partir de 2.000 FCFA, avec des suppléments gourmands pour personnaliser votre dessert.',
       image: '/bons-plans/partenaire-1.svg',
       whatsapp: '22940131977'
     }
