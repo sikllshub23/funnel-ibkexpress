@@ -61,7 +61,7 @@ export const ibkExpress = {
       nom: 'Casamisu',
       categorie: 'Fast Food',
       description: 'Découvrez les tiramisus et cheesecakes de Casa Misu, disponibles en plusieurs saveurs gourmandes : Classique, Oreo, Lotus et Kinder. À partir de 2.000 FCFA, avec des suppléments gourmands pour personnaliser votre dessert.',
-      image: '/bons-plans/partenaire-1.png',
+      image: '/bons-plans/partenaire-3.png',
       whatsapp: '22940131977'
     }
   ]
