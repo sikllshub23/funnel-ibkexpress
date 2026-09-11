@@ -3,7 +3,13 @@ import { buildPartnerWhatsAppLink } from '../../utils/whatsapp.js'
 export default function PartnerCard({ partner }) {
   return (
     <article className="flex flex-col overflow-hidden rounded-ticket border border-line bg-paper">
-      <img src={partner.image} alt="" className="h-32 w-full object-cover" loading="lazy" />
+      <img
+        src={partner.image}
+        alt=""
+        className="h-auto w-full object-contain"
+        loading="lazy"
+      />
+
       <div className="flex flex-1 flex-col gap-2 p-4">
         <div>
           <h3 className="font-display text-xl font-bold text-ink">{partner.nom}</h3>
@@ -11,7 +17,11 @@ export default function PartnerCard({ partner }) {
             {partner.categorie}
           </p>
         </div>
-        <p className="flex-1 text-sm leading-relaxed text-ink-soft">{partner.description}</p>
+
+        <p className="flex-1 text-sm leading-relaxed text-ink-soft">
+          {partner.description}
+        </p>
+
         <a
           href={buildPartnerWhatsAppLink(partner.whatsapp, partner.nom)}
           target="_blank"
