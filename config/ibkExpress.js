@@ -46,7 +46,7 @@ export const ibkExpress = {
       categorie: 'Vêtements hommes et femmes · Paires · Skincare ',
       description: 'Découvrez la beauté au pluriel chez Diana
 Shop, où chaque style raconte une histoire unique et où chaque soin révèle votre éclat naturel',
-      image: '/bons-plans/partenaire-1.svg',
+      image: '/bons-plans/partenaire-1.png',
       whatsapp: '22953011595'
     },
     {
@@ -54,7 +54,7 @@ Shop, où chaque style raconte une histoire unique et où chaque soin révèle v
       nom: 'Konnü',
       categorie: 'Fast food · Yaourts',
       description: 'Savourez un yaourt nature ou aux fruits accompagné d’un bon sandwich jambon-fromage, au poulet, a la viande hachée ou au poisson. Votre formule gourmande à partir de 2.000 FCFA.',
-      image: '/bons-plans/partenaire-2.svg',
+      image: '/bons-plans/partenaire-2.png',
       whatsapp: '22991208755'
     },
     {
@@ -62,7 +62,7 @@ Shop, où chaque style raconte une histoire unique et où chaque soin révèle v
       nom: 'Casamisu',
       categorie: 'Fast Food',
       description: 'Découvrez les tiramisus et cheesecakes de Casa Misu, disponibles en plusieurs saveurs gourmandes : Classique, Oreo, Lotus et Kinder. À partir de 2.000 FCFA, avec des suppléments gourmands pour personnaliser votre dessert.',
-      image: '/bons-plans/partenaire-1.svg',
+      image: '/bons-plans/partenaire-1.png',
       whatsapp: '22940131977'
     }
   ]
