@@ -42,11 +42,11 @@ export const ibkExpress = {
   bonsPlans: [
     {
       id: 'partenaire-1',
-      nom: 'Chez Maman Rosine',
-      categorie: 'Restaurant · Cuisine béninoise',
+      nom: 'Diana Shop',
+      categorie: 'Vêtements hommes et femmes · Paires · Skincare ',
       description: 'Plats du jour et grillades, livrés chauds sur Cotonou.',
       image: '/bons-plans/partenaire-1.svg',
-      whatsapp: '22900000001'
+      whatsapp: '22953011595'
     },
     {
       id: 'partenaire-2',
