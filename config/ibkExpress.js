@@ -51,19 +51,19 @@ Shop, où chaque style raconte une histoire unique et où chaque soin révèle v
     },
     {
       id: 'partenaire-2',
-      nom: 'Boutique Aïcha',
-      categorie: 'Mode & accessoires',
+      nom: 'Konnü-vivi',
+      categorie: 'Fast food',
       description: 'Tissus et prêt-à-porter, commande directe sur WhatsApp.',
       image: '/bons-plans/partenaire-2.svg',
-      whatsapp: '22900000002'
+      whatsapp: '22991208755'
     },
     {
       id: 'partenaire-3',
-      nom: 'Fast Food Zogbo',
+      nom: 'Casamisu',
       categorie: 'Fast Food',
-      description: 'Chawarma, Burgers, livraison prioritaire.',
+      description: 'Cakes, livraison prioritaire.',
       image: '/bons-plans/partenaire-1.svg',
-      whatsapp: '22900000003'
+      whatsapp: '22940131977'
     }
   ]
 }
